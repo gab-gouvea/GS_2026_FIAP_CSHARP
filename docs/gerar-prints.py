@@ -7,6 +7,8 @@ Cores reais do terminal (Console.ForegroundColor em ConsoleUtils.cs):
   EscreverErro    -> Red     (linhas "ERRO: ..."  - cobre "ERRO: [MONITOR] ...")
 Nenhuma outra coisa (titulos, subtitulos, banner, CRITICO) tem cor no terminal real,
 entao nao colorimos para que o PNG bata 1:1 com a execucao interativa.
+
+Saida: PNG so com o corpo do terminal (sem barra de janela / titulo falso).
 """
 
 from PIL import Image, ImageDraw, ImageFont
@@ -20,21 +22,14 @@ OUT = EVID
 
 BG = (28, 28, 30)           # macOS Terminal dark
 FG = (220, 220, 220)
-HEADER_BG = (45, 45, 47)
-TITLE_FG = (180, 180, 180)
 PADDING_X = 28
 PADDING_Y = 18
-HEADER_H = 32
 LINE_SPACING = 4
 
 FONT_SIZE = 16
 LINE_HEIGHT = FONT_SIZE + LINE_SPACING
 
-COLOR_RULES = [
-    (re.compile(r"^OK:"), (130, 220, 120)),
-    (re.compile(r"^AVISO:"), (240, 200, 90)),
-    (re.compile(r"^ERRO:"), (240, 120, 110)),
-]
+COLOR_RULES = []  # sem coloração: tudo branco no fundo escuro
 
 
 def encontrar_fonte():
@@ -50,7 +45,6 @@ def encontrar_fonte():
 
 
 FONT = encontrar_fonte()
-FONT_TITLE = encontrar_fonte()
 
 LARGURA_MAX_CARACTERES = 110
 
@@ -87,23 +81,15 @@ def cor_da_linha(linha: str):
     return FG
 
 
-def renderizar(linhas, titulo: str, caminho_saida: Path):
+def renderizar(linhas, caminho_saida: Path):
     largura_max = max((medir_largura(l) for l in linhas), default=200)
     largura = max(900, largura_max + PADDING_X * 2)
-    altura = HEADER_H + PADDING_Y * 2 + len(linhas) * LINE_HEIGHT
+    altura = PADDING_Y * 2 + len(linhas) * LINE_HEIGHT
 
     img = Image.new("RGB", (largura, altura), BG)
     draw = ImageDraw.Draw(img)
 
-    draw.rectangle([(0, 0), (largura, HEADER_H)], fill=HEADER_BG)
-    cy = HEADER_H // 2
-    for cx, cor in [(18, (255, 95, 86)), (40, (255, 189, 46)), (62, (39, 201, 63))]:
-        draw.ellipse([(cx - 7, cy - 7), (cx + 7, cy + 7)], fill=cor)
-    tw = medir_largura(titulo)
-    draw.text(((largura - tw) // 2, (HEADER_H - FONT_SIZE) // 2 - 1),
-              titulo, fill=TITLE_FG, font=FONT_TITLE)
-
-    y = HEADER_H + PADDING_Y
+    y = PADDING_Y
     for linha in linhas:
         draw.text((PADDING_X, y), linha, fill=cor_da_linha(linha), font=FONT)
         y += LINE_HEIGHT
@@ -141,16 +127,15 @@ def normalizar(texto: str) -> list[str]:
     return linhas
 
 
-def processar(arquivo: Path, titulo_base: str, max_linhas_por_pagina: int):
+def processar(arquivo: Path, max_linhas_por_pagina: int):
     linhas = normalizar(arquivo.read_text(encoding="utf-8"))
     paginas = quebrar_em_paginas(linhas, max_linhas_por_pagina)
     nome_base = arquivo.stem
     saidas = []
     for idx, pagina in enumerate(paginas, start=1):
         sufixo = "" if len(paginas) == 1 else f"-pag{idx}"
-        titulo = titulo_base if len(paginas) == 1 else f"{titulo_base} (pag {idx}/{len(paginas)})"
         caminho = OUT / f"{nome_base}{sufixo}.png"
-        renderizar(pagina, titulo, caminho)
+        renderizar(pagina, caminho)
         saidas.append(caminho)
     return saidas
 
@@ -158,16 +143,16 @@ def processar(arquivo: Path, titulo_base: str, max_linhas_por_pagina: int):
 def main():
     EVID.mkdir(parents=True, exist_ok=True)
     pacotes = [
-        ("01-cenario-completo.txt", "SwarmBuild - Cenario completo de realocacao automatica", 45),
-        ("02-listagens.txt", "SwarmBuild - Listagens (robos, tarefas, alertas)", 50),
-        ("03-erro-codigo-duplicado.txt", "SwarmBuild - Tratamento de excecao (codigo duplicado)", 60),
+        ("01-cenario-completo.txt", 45),
+        ("02-listagens.txt", 50),
+        ("03-erro-codigo-duplicado.txt", 60),
     ]
-    for nome, titulo, max_linhas in pacotes:
+    for nome, max_linhas in pacotes:
         arquivo = EVID / nome
         if not arquivo.exists():
             print(f"[pulando] {arquivo} nao existe.")
             continue
-        for saida in processar(arquivo, titulo, max_linhas):
+        for saida in processar(arquivo, max_linhas):
             print(f"[ok] {saida.relative_to(BASE.parent)}")
 
 

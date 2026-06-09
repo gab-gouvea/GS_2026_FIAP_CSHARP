@@ -1,0 +1,95 @@
+
+####################################################
+#                                                  #
+#     SwarmBuild - Orquestracao de Enxame          #
+#     Construcao Robotica Autonoma                 #
+#     Global Solution 2026 - Space Connect         #
+#                                                  #
+####################################################
+
+
+========================================
+  SWARMBUILD - MENU PRINCIPAL
+========================================
+1) Robos
+2) Tarefas
+3) Heartbeats
+4) Alertas
+5) Simulacao (cenario lunar)
+0) Sair
+Escolha: 
+========================================
+  SIMULACAO - CENARIO LUNAR ARTEMIS
+========================================
+1) Executar cenario completo de realocacao automatica
+2) Forcar verificacao do monitor de falhas
+3) Iniciar monitor em background
+4) Parar monitor em background
+5) Limpar todos os dados (reset)
+0) Voltar
+Escolha: 
+====================================================
+  CENARIO: 3 robos, 2 tarefas, 1 falha de hardware
+====================================================
+
+-- Passo 1/6 - Cadastrando enxame --
+   [ESC-001] Hephaestus (Excavator-V2) - ESCAVADEIRA | DISPONIVEL | Bat 100%
+   [ESC-002] Vulcan (Excavator-V2) - ESCAVADEIRA | DISPONIVEL | Bat 100%
+   [TRN-001] Mercury (Hauler-L1) - TRANSPORTADOR | DISPONIVEL | Bat 100%
+
+-- Passo 2/6 - Heartbeats iniciais (todos saudaveis) --
+3 heartbeats registrados.
+
+-- Passo 3/6 - Criando tarefas de construcao --
+   T-CRATERA-A - Escavar cratera A para fundacao do habitat
+   T-TRANSP-A - Transportar regolito da cratera A para o silo
+
+-- Passo 4/6 - Atribuicao automatica (escolhe robo mais proximo) --
+   Tarefa T-CRATERA-A -> Robo ESC-001 (proximidade venceu)
+   Tarefa T-TRANSP-A -> Robo TRN-001
+
+-- Passo 5/6 - SIMULANDO FALHA: robo para de transmitir --
+AVISO: Robo ESC-001 esta sem comunicacao ha 5 minutos (timeout: 60s).
+
+-- Passo 6/6 - Monitor de falhas detecta e realoca automaticamente --
+AVISO: [MONITOR] Detectados 1 robo(s) offline. Marcando como FALHA.
+ERRO: [MONITOR] Robo ESC-001 marcado como FALHA. Realocando 1 tarefa(s).
+AVISO: [MONITOR] Tarefa T-CRATERA-A realocada apos falha de ESC-001
+   Robos offline detectados: 1
+
+-- Resultado pos-realocacao --
+   [ESC-001] Hephaestus (Excavator-V2) - ESCAVADEIRA | FALHA | Bat 95%
+   [ESC-002] Vulcan (Excavator-V2) - ESCAVADEIRA | EM_TAREFA | Bat 88%
+   [TRN-001] Mercury (Hauler-L1) - TRANSPORTADOR | EM_TAREFA | Bat 72%
+
+-- Alertas gerados pelo sistema (sem intervencao humana) --
+   [AVISO] TAREFA_REALOCADA: Tarefa T-CRATERA-A realocada de ESC-001 para ESC-002
+   [CRITICO] ROBO_OFFLINE: Robo ESC-001 nao envia heartbeat ha mais de 60s. Marcado como FALHA.
+
+-- Tarefas apos realocacao --
+   [T-CRATERA-A] EM_EXECUCAO | robo=2 | realocada=1x
+   [T-TRANSP-A] EM_EXECUCAO | robo=3 | realocada=0x
+OK: Cenario concluido. A missao continua mesmo com a falha individual de um robo.
+
+Pressione ENTER para continuar...
+========================================
+  SIMULACAO - CENARIO LUNAR ARTEMIS
+========================================
+1) Executar cenario completo de realocacao automatica
+2) Forcar verificacao do monitor de falhas
+3) Iniciar monitor em background
+4) Parar monitor em background
+5) Limpar todos os dados (reset)
+0) Voltar
+Escolha: 
+
+========================================
+  SWARMBUILD - MENU PRINCIPAL
+========================================
+1) Robos
+2) Tarefas
+3) Heartbeats
+4) Alertas
+5) Simulacao (cenario lunar)
+0) Sair
+Escolha: Encerrando SwarmBuild. Ate a proxima missao.
